@@ -10,22 +10,20 @@ const Main = ({
   showResult,
   recentPrompt,
   resultData,
-  setInputFromCard
+  setInputFromCard,
 }) => {
   const [typingText, setTypingText] = useState('');
 
   const handleCardClick = (text) => {
-  setInput(text);
-  if (setInputFromCard) setInputFromCard(text);
-  askQuestion(text);  // Pass the prompt directly
-};
-
+    setInput(text);
+    if (setInputFromCard) setInputFromCard(text);
+    askQuestion(text); // pass prompt to askQuestion
+  };
 
   useEffect(() => {
     if (!loading && showResult && resultData) {
-      setTypingText(''); // Reset text
+      setTypingText('');
       let index = 0;
-
       const interval = setInterval(() => {
         if (index < resultData.length) {
           setTypingText((prev) => prev + resultData.charAt(index));
@@ -34,7 +32,6 @@ const Main = ({
           clearInterval(interval);
         }
       }, 20);
-
       return () => clearInterval(interval);
     }
   }, [loading, showResult, resultData]);
@@ -61,7 +58,6 @@ const Main = ({
               <img src={assets.user_icon} alt="user" />
               <p>{recentPrompt}</p>
             </div>
-
             <div className="ai-response visible">
               <img src={assets.gemini_icon} alt="gemini" />
               <pre>{typingText}</pre>
@@ -73,28 +69,28 @@ const Main = ({
               <p><span>Hello, Dev</span></p>
               <p>How can I help you today?</p>
             </div>
+
             <div className="cards">
-  <div className="card" onClick={() => handleCardClick("Brainstorm team bonding activities for our work retreat ")}>
-    <p>Brainstorm team bonding activities for our work retreat</p>
-    <img src={assets.compass_icon} alt="icon" />
-  </div>
+              <div className="card" onClick={() => handleCardClick("Brainstorm team bonding activities for our work retreat")}>
+                <p>Brainstorm team bonding activities</p>
+                <img src={assets.compass_icon} alt="icon" />
+              </div>
 
-  <div className="card" onClick={() => handleCardClick("Summarize the latest AI trends in simple terms")}>
-    <p>Summarize the latest AI trends in simple terms</p>
-    <img src={assets.bulb_icon} alt="icon" />
-  </div>
+              <div className="card" onClick={() => handleCardClick("Summarize the latest AI trends in simple terms")}>
+                <p>Summarize the latest AI trends</p>
+                <img src={assets.bulb_icon} alt="icon" />
+              </div>
 
-  <div className="card" onClick={() => handleCardClick("Help me write a code")}>
-    <p>Help me Write a Code</p>
-    <img src={assets.code_icon} alt="icon" />
-  </div>
+              <div className="card" onClick={() => handleCardClick("Help me write a code")} >
+                <p>Help me write a code</p>
+                <img src={assets.code_icon} alt="icon" />
+              </div>
 
-  <div className="card" onClick={() => handleCardClick("What are the top 5 skills to learn in 2025?")}>
-    <p>What are the top 5 skills to learn in 2025?</p>
-    <img src={assets.message_icon} alt="icon" />
-  </div>
-</div>
-
+              <div className="card" onClick={() => handleCardClick("What are the top 5 skills to learn in 2025?")}>
+                <p>Top 5 skills to learn in 2025</p>
+                <img src={assets.message_icon} alt="icon" />
+              </div>
+            </div>
           </>
         )}
 
@@ -115,7 +111,7 @@ const Main = ({
             <div className="icon-bar">
               <img src={assets.gallery_icon} alt="gallery" />
               <img src={assets.mic_icon} alt="mic" />
-              <button id='Ask-button'
+              <button
                 onClick={() => {
                   askQuestion();
                   setInput('');

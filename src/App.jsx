@@ -12,50 +12,50 @@ const App = () => {
   const [resultData, setResultData] = useState("");
 
   const askQuestion = async (customPrompt) => {
-  const question = customPrompt || input;
+    const question = (customPrompt || input).trim();
+    if (!question) return;
 
-  if (!question.trim()) return;
+    setLoading(true);
+    setShowResult(false);
+    setRecentPrompt(question);
 
-  setLoading(true);
-  setShowResult(false);
-  setRecentPrompt(question);
+    const hiddenInstruction = " (Respond in under 500 words.)";
 
-const hiddenInstruction = " (Respond in under 500 words.)";
-
-const payload = {
-  contents: [
-    {
-      parts: [
+    const payload = {
+      contents: [
         {
-          text: (input || "Explain how AI works") + hiddenInstruction
+          parts: [
+            {
+              text: question + hiddenInstruction,
+            }
+          ]
         }
       ]
+    };
+
+    try {
+      const res = await fetch(URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+      const answer = data?.candidates?.[0]?.content?.parts?.[0]?.text || "No response";
+
+      // Save prompt-response to history
+      setPrevPrompts(prev => [...prev, { prompt: question, response: answer }]);
+      setResultData(answer);
+      setShowResult(true);
+    } catch (error) {
+      setResultData("❌ Something went wrong");
+      setShowResult(true);
+    } finally {
+      setLoading(false);
     }
-  ]
-};
-
-
-  try {
-    const res = await fetch(URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
-
-    const data = await res.json();
-    const answer = data?.candidates?.[0]?.content?.parts?.[0]?.text || "No response";
-    setResultData(answer);
-    setShowResult(true);
-  } catch (error) {
-    setResultData("❌ Something went wrong");
-    setShowResult(true);
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   const clearChat = () => {
     setPrevPrompts([]);
@@ -67,10 +67,7 @@ const payload = {
 
   const setInputFromCard = (text) => {
     setInput(text);
-    setRecentPrompt(text);
-    setShowResult(true);
-    const found = prevPrompts.find(p => p.prompt === text);
-    setResultData(found?.response || "No cached response.");
+    askQuestion(text); // 🔥 triggers correct question immediately
   };
 
   return (
